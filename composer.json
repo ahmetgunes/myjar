@@ -1,0 +1,16 @@
+{
+    "name": "ahmetgunes/myjar",
+    "license": "proprietary",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.3.9",
+        "php-amqplib/php-amqplib": "^2.6"
+    },
+    "require-dev": {
+    }
+}
