@@ -64,7 +64,7 @@ class Interest
         $loanInfo['days'] = $this->days;
         $loanInfo['interest'] = $interest;
         $loanInfo['totalSum'] = $interest + $this->amount;
-        $loanInfo['token'] = 'padawan';
+        $loanInfo['token'] = 'MasterYoda';
         return $loanInfo;
     }
 }
