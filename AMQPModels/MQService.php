@@ -30,13 +30,6 @@ class MQService
     {
         $this->connection = new AMQPStreamConnection($rabbitHost, $rabbitPort, $username, $password);
         $this->channel = $this->connection->channel();
-        $this->declareQueues();
-    }
-
-    public function declareQueues()
-    {
-        $this->channel->queue_declare('interest-queue', false, true, false, false);
-        $this->channel->queue_declare('solved-interest-queue', false, true, false, false);
     }
 
     /**

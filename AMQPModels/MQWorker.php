@@ -9,6 +9,8 @@
 namespace AMQPModels;
 
 
+use InterestModels\Interest;
+use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class MQWorker
@@ -26,24 +28,40 @@ class MQWorker
 
     public function sendToQueue(AMQPMessage $message, $queue)
     {
-        $this->rabbit->getChannel()->basic_publish($message, '', $queue);
+        try {
+            $this->rabbit->getChannel()->basic_publish($message, '', $queue);
+        } catch (\Exception $exc) {
+            echo $exc->getMessage();
+        }
     }
 
     public function wait()
     {
         $channel = $this->rabbit->getChannel();
-        $processCoordinate = function (AMQPMessage $message) use ($channel){
-            $messageBody = json_decode($message->getBody());
-            var_dump($messageBody);
+        $interest = new Interest();
+        $processLoan = function (AMQPMessage $message) use ($channel, $interest) {
             try {
-                $channel->basic_ack($message->delivery_info['delivery_tag']);
+
+                $messageBody = json_decode($message->getBody());
+                if (is_numeric($messageBody->sum) && is_numeric($messageBody->days) &&
+                    $messageBody->sum > 0 && $messageBody->days > 0) {
+                    echo $message->getBody() . PHP_EOL;
+                    $interest->setAmount($messageBody->sum);
+                    $interest->setDays($messageBody->days);
+                    $calculatedLoanInfo = $interest->getLoanResult();
+                    $response = json_encode($calculatedLoanInfo);
+                    $response = new AMQPMessage($response, array('content_type' => 'text/json', 'delivery_mode' => 2));
+                    $this->sendToQueue($response, 'solved-interest-queue');
+                } else {
+                    $channel->basic_reject($message->delivery_info['delivery_tag'], false);
+                }
             } catch (\Exception $exc) {
-                $channel->basic_reject($message->delivery_info['delivery_tag'], true);
+                $channel->basic_reject($message->delivery_info['delivery_tag'], false);
             }
         };
-        $channel->basic_consume('interest-queue', '', false, false, false, false, $processCoordinate);
+        $channel->basic_consume('interest-queue', null, false, false, false, false, $processLoan);
 
-        while(count($channel->callbacks)) {
+        while (count($channel->callbacks)) {
             $channel->wait();
         }
 

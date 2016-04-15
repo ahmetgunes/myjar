@@ -14,21 +14,14 @@ class Interest
 
     private $amount;
 
-    public function __construct($days, $amount)
-    {
-        $this->days = $days;
-        $this->amount = $amount;
-    }
-
-    public function calculateTotalInterest()
+    protected function calculateInterest()
     {
         $divisibleBy15 = floor($this->days / 15);
-        $divisibleBy3 = floor($this->days / 3 - $divisibleBy15);
-        $divisibleBy5 = floor($this->days / 5 - $divisibleBy15);
-        $nonDivisibles = floor($this->days - $divisibleBy15 - $divisibleBy3 - $divisibleBy5);
-
-        $interest = $this->amount * (round($divisibleBy15) * 3 + round($divisibleBy3) * 1 + round($divisibleBy5) * 2 + 4 * round($nonDivisibles)) / 100;
-        return $interest;
+        $divisibleBy3 = floor($this->days / 3) - $divisibleBy15;
+        $divisibleBy5 = floor($this->days / 5) - $divisibleBy15;
+        $nonDivisibles = $this->days - $divisibleBy15 - $divisibleBy3 - $divisibleBy5;
+        $interest = $this->amount * ($divisibleBy15 * 3 + $divisibleBy3 * 1 + $divisibleBy5 * 2 + $nonDivisibles * 4) / 100;
+        return round($interest, 2);
     }
 
     /**
@@ -61,5 +54,17 @@ class Interest
     public function setAmount($amount)
     {
         $this->amount = $amount;
+    }
+
+    public function getLoanResult()
+    {
+        $interest = $this->calculateInterest();
+        $loanInfo = array();
+        $loanInfo['sum'] = $this->amount;
+        $loanInfo['days'] = $this->days;
+        $loanInfo['interest'] = $interest;
+        $loanInfo['totalSum'] = $interest + $this->amount;
+        $loanInfo['token'] = 'padawan';
+        return $loanInfo;
     }
 }

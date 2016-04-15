@@ -9,12 +9,12 @@ require_once __DIR__.'/vendor/autoload.php';
  * Time: 20:32
  */
 require_once 'AMQPModels/MQService.php';
+require_once 'AMQPModels/MQWorker.php';
 require_once 'InterestModels/Interest.php';
 
-const MQ_HOST = 'http://impact.ccat.eu/';
-const MQ_USER = 'myjar';
-const MQ_PASSWORD = 'myjar';
-$mqService = new \AMQPModels\MQService(MQ_HOST, MQ_USER, MQ_PASSWORD);
+$mqHost = 'impact.ccat.eu';
+$mqUser = 'myjar';
+$mqPassword = 'myjar';
+$mqService = new \AMQPModels\MQService($mqHost, $mqUser, $mqPassword);
 $amqpWorker = new \AMQPModels\MQWorker($mqService);
-$interest = new \InterestModels\Interest(10, 579);
-echo $interest->calculateTotalInterest();
+$amqpWorker->wait();
