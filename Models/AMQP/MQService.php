@@ -1,6 +1,6 @@
 <?php
 
-namespace AMQPModels;
+namespace AMQP;
 
 /**
  * Created by PhpStorm.

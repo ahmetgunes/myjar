@@ -4,7 +4,8 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "": "src/"
+            "AMQP\\": "models/AMQP",
+            "Interest\\": "models/Interest"
         }
     },
     "require": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace InterestModels;
+namespace Interest;
 
 /**
  * Created by PhpStorm.
