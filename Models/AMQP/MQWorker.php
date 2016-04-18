@@ -6,10 +6,10 @@
  * Time: 20:48
  */
 
-namespace AMQPModels;
+namespace AMQP;
 
 
-use InterestModels\Interest;
+use Interest\Interest;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
